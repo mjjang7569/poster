@@ -1,0 +1,971 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+KR:wght@500;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    font-family: "Noto Sans KR", sans-serif;
+    color: #f3f0e8;
+    background: #1b1d19;
+    font-synthesis: none;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+  }
+}
+
+.poster-shell {
+  min-height: 100vh;
+  padding: 4vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.2rem, 3vw, 2rem);
+  background: #262923;
+}
+
+.preview-pane {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.preview-stage {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.preview-frame {
+  flex: none;
+}
+
+.preview-scale {
+  transform-origin: top left;
+}
+
+@media (min-width: 1024px) {
+  .poster-shell {
+    /* 미리보기 칸 폭 = (화면 높이 - 상하 여백 - 다운로드 바) × A2 비율(420/594).
+       포스터가 칸을 꽉 채우고, 남는 폭은 편집기가 쓴다. */
+    --pane-width: clamp(340px, calc((100vh - 3rem - 5.5rem) * 420 / 594), min(52vw, 760px));
+    display: grid;
+    grid-template-columns: minmax(0, 1100px) var(--pane-width);
+    justify-content: center;
+    align-items: start;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+
+  .poster-shell > section:first-child {
+    max-width: none;
+  }
+
+  .preview-pane {
+    position: sticky;
+    top: 1.5rem;
+    height: calc(100vh - 3rem);
+  }
+
+  .preview-pane .export-bar {
+    width: 100%;
+    flex: none;
+    flex-wrap: nowrap;
+  }
+
+  .preview-pane .export-spec {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .preview-pane .export-buttons button {
+    min-width: 0;
+    white-space: nowrap;
+  }
+}
+
+.concept-picker {
+  width: min(100%, 760px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  color: #f3f0e8;
+}
+
+.picker-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: none;
+}
+
+.picker-heading span {
+  color: #91958a;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.picker-heading strong {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.picker-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.picker-buttons button {
+  min-height: 3.25rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #484b42;
+  background: #1b1d19;
+  color: #a9ada2;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.25;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.picker-buttons button span {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #74786e;
+  font:
+    900 0.6rem/1 "Archivo Black",
+    sans-serif;
+}
+
+.picker-buttons button:hover,
+.picker-buttons button.active {
+  border-color: #c8f135;
+  background: #25291f;
+  color: #ffffff;
+}
+
+.picker-buttons button.active span {
+  color: #c8f135;
+}
+
+.export-bar {
+  width: min(100%, 760px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #484b42;
+  background: #1b1d19;
+  color: #f3f0e8;
+}
+
+.export-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.export-spec strong {
+  color: #c8f135;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.export-spec span {
+  color: #92968b;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.export-buttons button {
+  min-width: 6.3rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #5d6155;
+  background: #292c26;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.export-buttons button:last-child {
+  border-color: #c8f135;
+  background: #c8f135;
+  color: #171914;
+}
+
+.export-buttons button span {
+  margin-right: 0.35rem;
+  font:
+    900 0.62rem/1 "Archivo Black",
+    sans-serif;
+}
+
+.export-buttons button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.poster {
+  --ink: #171914;
+  --paper: #f3f0e8;
+  --muted: #aaa99f;
+  --line: #484b42;
+  --accent: #c8f135;
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 760px);
+  aspect-ratio: 420 / 594;
+  overflow: hidden;
+  padding: 4.6% 5.4% 4%;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  background: var(--ink);
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.42);
+}
+
+.poster::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 27%;
+  height: 1.1%;
+  background: var(--accent);
+}
+
+.poster-header {
+  min-height: 7.5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2.6%;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.55rem, 2vw, 1rem);
+}
+
+.brand-watermark {
+  position: absolute;
+  top: -2.5%;
+  left: -3%;
+  z-index: -1;
+  width: 46%;
+  aspect-ratio: 1;
+  background: #858b78;
+  opacity: 0.085;
+  -webkit-mask: url("/kmgm-holdem-mark.png?v=3") center / contain no-repeat;
+  mask: url("/kmgm-holdem-mark.png?v=3") center / contain no-repeat;
+  pointer-events: none;
+}
+
+.poster-acid .brand-watermark,
+.poster-cobalt .brand-watermark {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.brand-copy {
+  display: flex;
+  align-items: center;
+}
+
+.header-label {
+  color: var(--paper);
+  font:
+    900 clamp(0.62rem, 2.1vw, 1.08rem)/1 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.branch {
+  padding-left: clamp(0.55rem, 2vw, 1rem);
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+  font:
+    700 clamp(0.38rem, 1.25vw, 0.64rem)/1 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: 0.22em;
+}
+
+.month {
+  width: clamp(3rem, 10.2vw, 5.1rem);
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--ink);
+}
+
+.month span {
+  margin-bottom: 0.1rem;
+  font:
+    800 clamp(0.35rem, 1.2vw, 0.62rem)/1 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: 0.17em;
+}
+
+.month strong {
+  font:
+    900 clamp(1.4rem, 5vw, 2.55rem)/0.9 "Archivo Black",
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+.hero {
+  position: relative;
+  padding: 3.2% 0 3.1%;
+  text-align: left;
+}
+
+.hero::after {
+  content: "12";
+  position: absolute;
+  right: 0;
+  bottom: 1%;
+  z-index: -1;
+  color: #22251f;
+  font:
+    900 clamp(4.5rem, 19vw, 9.5rem)/0.72 "Archivo Black",
+    sans-serif;
+  letter-spacing: -0.1em;
+}
+
+.eyebrow {
+  width: fit-content;
+  margin-bottom: 1.5%;
+  padding: 0.38em 0.72em;
+  background: var(--accent);
+  color: var(--ink);
+  font:
+    900 clamp(0.4rem, 1.35vw, 0.68rem)/1 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: 0.17em;
+}
+
+.hero h1 {
+  margin: 0;
+  font:
+    900 clamp(1.7rem, 6.8vw, 3.45rem)/0.98 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: -0.075em;
+}
+
+.hero h1 span {
+  display: block;
+  margin-bottom: 1.1%;
+  color: var(--muted);
+  font-size: 0.43em;
+  letter-spacing: -0.04em;
+}
+
+.hero-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.8%;
+}
+
+.hero-subtitle svg {
+  width: clamp(1.2rem, 4vw, 2rem);
+  color: var(--accent);
+}
+
+.hero-subtitle p {
+  margin: 0;
+  color: #d2d0c8;
+  font-size: clamp(0.52rem, 1.72vw, 0.88rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.schedule {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #62665a;
+  border-top: 4px solid var(--accent);
+}
+
+.table-head,
+.table-row {
+  display: grid;
+  grid-template-columns: 0.72fr 0.88fr 2.55fr 0.87fr 1.38fr;
+}
+
+.table-head {
+  min-height: clamp(2rem, 6.5vw, 3.25rem);
+  align-items: center;
+  border-bottom: 1px solid #62665a;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    900 clamp(0.4rem, 1.3vw, 0.66rem)/1.15 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.table-head span:not(:last-child),
+.table-row > div:not(:last-child) {
+  border-right: 1px solid var(--line);
+}
+
+.table-body {
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-row {
+  min-height: 0;
+  flex: 1;
+  border-bottom: 1px solid var(--line);
+}
+
+.table-row:last-child {
+  border-bottom: 0;
+}
+
+.table-row:nth-child(even) {
+  background: #1c1f19;
+}
+
+.table-row > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.date-cell {
+  position: relative;
+  gap: 0.13rem;
+  background: var(--accent);
+  color: var(--ink);
+}
+
+.table-row:nth-child(even) .date-cell {
+  background: #b9df2f;
+}
+
+.date-cell strong {
+  font:
+    900 calc(clamp(0.78rem, 2.8vw, 1.42rem) * var(--row-scale, 1))/1 "Archivo Black",
+    sans-serif;
+}
+
+.date-cell span {
+  font-size: calc(clamp(0.4rem, 1.2vw, 0.61rem) * var(--row-scale, 1));
+  font-weight: 800;
+}
+
+.time-cell {
+  color: #d8d5cc;
+  font:
+    800 calc(clamp(0.6rem, 2.05vw, 1.03rem) * var(--row-scale, 1))/1 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.channel-cell {
+  gap: calc(clamp(0.25rem, 1vw, 0.55rem) * var(--row-scale, 1));
+  padding: 0 3%;
+}
+
+.channel-cell svg {
+  width: calc(clamp(1rem, 3.15vw, 1.6rem) * var(--row-scale, 1));
+  flex: none;
+  color: var(--accent);
+}
+
+.channel-cell strong {
+  font-size: calc(clamp(0.7rem, 2.4vw, 1.22rem) * var(--row-scale, 1));
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  line-height: 1.15;
+  word-break: keep-all;
+}
+
+.entry-cell {
+  gap: 0.08rem;
+  color: #d8d5cc;
+}
+
+.entry-cell strong {
+  font:
+    900 calc(clamp(0.66rem, 2.15vw, 1.1rem) * var(--row-scale, 1))/1 "Archivo Black",
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+.event-cell {
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.event-cell span {
+  margin-bottom: 0.2rem;
+  color: var(--muted);
+  font-size: calc(clamp(0.47rem, 1.5vw, 0.76rem) * var(--row-scale, 1));
+  font-weight: 700;
+}
+
+.event-cell strong {
+  color: var(--accent);
+  font:
+    900 calc(clamp(0.74rem, 2.65vw, 1.35rem) * var(--row-scale, 1))/1 "Archivo Black",
+    sans-serif;
+}
+
+.poster-footer {
+  padding-top: 4%;
+}
+
+.poster-footer p {
+  margin: 0;
+  font-size: clamp(0.7rem, 2.4vw, 1.22rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.poster-footer p span {
+  margin-right: 0.45rem;
+  color: var(--accent);
+}
+
+.footer-note {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.3%;
+  padding-top: 1.9%;
+  border-top: 1px solid var(--line);
+  color: #73766d;
+  font:
+    700 clamp(0.33rem, 1vw, 0.52rem)/1 "Noto Sans KR",
+    sans-serif;
+  letter-spacing: 0.14em;
+}
+
+/* 02 — Warm editorial: paper-led, high contrast, restrained red accent. */
+.poster-ivory {
+  --ink: #171712;
+  --paper: #f2eee3;
+  --muted: #6f6d65;
+  --line: #c2bdb1;
+  --accent: #ef4b32;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.poster-ivory::before {
+  top: 0;
+  right: auto;
+  left: 0;
+  width: 100%;
+  height: 0.7%;
+}
+
+.poster-ivory .poster-header,
+.poster-ivory .footer-note {
+  border-color: var(--line);
+}
+
+.poster-ivory .brand-watermark {
+  background: #645e53;
+  opacity: 0.09;
+}
+
+.poster-ivory .header-label,
+.poster-ivory .hero h1,
+.poster-ivory .time-cell,
+.poster-ivory .entry-cell,
+.poster-ivory .hero-subtitle p {
+  color: var(--ink);
+}
+
+.poster-ivory .month {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.poster-ivory .hero {
+  padding-top: 4.2%;
+  text-align: center;
+}
+
+.poster-ivory .hero::after {
+  right: 50%;
+  transform: translateX(50%);
+  color: #e7e2d6;
+}
+
+.poster-ivory .eyebrow {
+  margin-inline: auto;
+}
+
+.poster-ivory .hero h1 span {
+  color: #747169;
+}
+
+.poster-ivory .hero-subtitle {
+  justify-content: center;
+}
+
+.poster-ivory .schedule {
+  border-color: var(--ink);
+  border-top-width: 5px;
+}
+
+.poster-ivory .table-head {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.poster-ivory .table-head span:not(:last-child),
+.poster-ivory .table-row > div:not(:last-child),
+.poster-ivory .table-row {
+  border-color: var(--line);
+}
+
+.poster-ivory .table-row,
+.poster-ivory .table-row:nth-child(even) {
+  background: transparent;
+}
+
+.poster-ivory .table-row:nth-child(even) {
+  background: #e9e4d8;
+}
+
+.poster-ivory .date-cell,
+.poster-ivory .table-row:nth-child(even) .date-cell {
+  background: var(--accent);
+  color: #fff8ec;
+}
+
+.poster-ivory .channel-cell svg,
+.poster-ivory .event-cell strong,
+.poster-ivory .poster-footer p span {
+  color: var(--accent);
+}
+
+.poster-ivory .event-cell span,
+.poster-ivory .footer-note {
+  color: #77746c;
+}
+
+/* 03 — Burgundy night: softer luxury palette and centered invitation layout. */
+.poster-burgundy {
+  --ink: #35151e;
+  --paper: #fff4e8;
+  --muted: #d3a99f;
+  --line: #71404a;
+  --accent: #ffb39d;
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.poster-burgundy::before {
+  top: auto;
+  right: 5.4%;
+  bottom: 0;
+  width: 40%;
+  height: 1%;
+}
+
+.poster-burgundy .month {
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.poster-burgundy .brand-watermark {
+  background: var(--accent);
+  opacity: 0.075;
+}
+
+.poster-burgundy .hero {
+  text-align: center;
+}
+
+.poster-burgundy .hero::after {
+  right: 50%;
+  transform: translateX(50%);
+  color: #421c26;
+}
+
+.poster-burgundy .eyebrow {
+  margin-inline: auto;
+  border-radius: 999px;
+  padding-inline: 1.1em;
+}
+
+.poster-burgundy .hero h1 span {
+  color: var(--accent);
+}
+
+.poster-burgundy .hero-subtitle {
+  justify-content: center;
+}
+
+.poster-burgundy .hero-subtitle p,
+.poster-burgundy .time-cell,
+.poster-burgundy .entry-cell {
+  color: var(--paper);
+}
+
+.poster-burgundy .schedule {
+  border: 0;
+  border-top: 1px solid var(--accent);
+}
+
+.poster-burgundy .table-head {
+  background: transparent;
+  color: var(--accent);
+}
+
+.poster-burgundy .table-head span:not(:last-child),
+.poster-burgundy .table-row > div:not(:last-child) {
+  border-right: 0;
+}
+
+.poster-burgundy .table-body {
+  gap: 3px;
+  padding-top: 3px;
+}
+
+.poster-burgundy .table-row,
+.poster-burgundy .table-row:nth-child(even) {
+  border: 0;
+  background: #451d28;
+}
+
+.poster-burgundy .table-row:nth-child(even) {
+  background: #4d202c;
+}
+
+.poster-burgundy .date-cell,
+.poster-burgundy .table-row:nth-child(even) .date-cell {
+  background: var(--accent);
+}
+
+.poster-burgundy .channel-cell svg,
+.poster-burgundy .event-cell strong,
+.poster-burgundy .poster-footer p span {
+  color: var(--accent);
+}
+
+/* 04 — Cobalt block: graphic color blocking and a bolder event-board feel. */
+.poster-cobalt {
+  --ink: #1739b8;
+  --paper: #fff4db;
+  --muted: #b8c5ff;
+  --line: rgba(255, 244, 219, 0.36);
+  --accent: #ffb52e;
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.poster-cobalt::before {
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 1%;
+  background: var(--accent);
+}
+
+.poster-cobalt .poster-header {
+  border-bottom: 3px solid var(--paper);
+}
+
+.poster-cobalt .brand-watermark {
+  background: var(--paper);
+  opacity: 0.085;
+}
+
+.poster-cobalt .header-label,
+.poster-cobalt .hero h1 {
+  color: var(--paper);
+}
+
+.poster-cobalt .month {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.poster-cobalt .hero {
+  padding: 3.8% 0 3.6%;
+}
+
+.poster-cobalt .hero::after {
+  right: -1%;
+  color: rgba(255, 255, 255, 0.08);
+}
+
+.poster-cobalt .eyebrow {
+  background: var(--accent);
+  color: #251600;
+}
+
+.poster-cobalt .hero h1 span {
+  color: var(--accent);
+}
+
+.poster-cobalt .hero-subtitle p,
+.poster-cobalt .time-cell,
+.poster-cobalt .entry-cell {
+  color: var(--paper);
+}
+
+.poster-cobalt .schedule {
+  border: 3px solid var(--paper);
+  border-top: 0;
+}
+
+.poster-cobalt .table-head {
+  background: var(--accent);
+  color: #251600;
+}
+
+.poster-cobalt .table-head span:not(:last-child),
+.poster-cobalt .table-row > div:not(:last-child),
+.poster-cobalt .table-row {
+  border-color: var(--line);
+}
+
+.poster-cobalt .table-row,
+.poster-cobalt .table-row:nth-child(even) {
+  background: rgba(7, 25, 116, 0.22);
+}
+
+.poster-cobalt .table-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.poster-cobalt .date-cell,
+.poster-cobalt .table-row:nth-child(even) .date-cell {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.poster-cobalt .channel-cell svg,
+.poster-cobalt .event-cell strong,
+.poster-cobalt .poster-footer p span {
+  color: var(--accent);
+}
+
+.poster-cobalt .footer-note {
+  color: var(--muted);
+}
+
+@media (max-width: 520px) {
+  .poster-shell {
+    padding: 0;
+    align-items: start;
+  }
+
+  .concept-picker {
+    padding: 1rem;
+    display: block;
+  }
+
+  .picker-heading {
+    margin-bottom: 0.8rem;
+  }
+
+  .picker-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .export-bar {
+    width: calc(100% - 2rem);
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .export-buttons button {
+    flex: 1;
+  }
+
+  .poster {
+    box-shadow: none;
+  }
+}
+
+@media print {
+  @page {
+    size: A2 portrait;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 420mm;
+    height: 594mm;
+    background: #171914;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .poster-shell {
+    width: 420mm;
+    height: 594mm;
+    min-height: 0;
+    padding: 0;
+    display: block;
+    background: none;
+  }
+
+  .concept-picker,
+  .export-bar {
+    display: none;
+  }
+
+  .preview-pane,
+  .preview-stage,
+  .preview-frame,
+  .preview-scale {
+    display: block;
+    position: static;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    overflow: visible;
+  }
+
+  .poster {
+    width: 420mm;
+    height: 594mm;
+    aspect-ratio: auto;
+    box-shadow: none;
+  }
+}
